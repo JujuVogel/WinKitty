@@ -19,10 +19,15 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        // allows drag if pixel isn't transparent
-        this.MouseLeftButtonDown += (s, e) => this.DragMove();
-        _bitmap = new BitmapImage(new Uri("assets/cat_animations/Idle.png", UriKind.Relative));
 
+        // loads sprite from spritesheet
+        var sheet = new BitmapImage(new Uri("assets/cat_animations/Idle.png", UriKind.Relative));
+        int frameWidth = 64;
+        int frameIndex = 0;
+        _bitmap = new CroppedBitmap(sheet, new Int32Rect(frameIndex * frameWidth, 0, frameWidth, 32));
+        Idle.Source = _bitmap;
+
+        // allows drag if pixel isn't transparent
         this.MouseLeftButtonDown += (s, e) =>
         {
             var pos = e.GetPosition(Idle);
