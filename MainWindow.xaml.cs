@@ -25,7 +25,7 @@ public partial class MainWindow : Window
 
         this.MouseLeftButtonDown += (s, e) =>
         {
-            var pos = e.GetPosition(CatImage);
+            var pos = e.GetPosition(Idle);
             if (IsPixelOpaque(pos)) this.DragMove();
         };
     }
