@@ -19,5 +19,6 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        this.MouseLeftButtonDown += (s, e) => this.DragMove();
     }
 }
