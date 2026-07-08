@@ -33,6 +33,13 @@ public class CatBehavior
         _tick.Start();
     }
 
+    public void Pause() => _tick.Stop();
+    public void Resume()
+    {
+        PickNextState();
+        _tick.Start();
+    }
+
     private void PickNextState()
     {
         double roll = _rng.NextDouble();

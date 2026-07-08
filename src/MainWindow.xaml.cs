@@ -28,14 +28,20 @@ public partial class MainWindow : Window
         _behavior = new CatBehavior(this, _animator);
         _behavior.Start();
 
+        // grabbing logic
         this.MouseLeftButtonDown += (s, e) =>
         {
             var pos = e.GetPosition(Idle);
-            if (IsPixelOpaque(pos)) this.DragMove();
+            if (IsPixelOpaque(pos))
+            {
+                _behavior.Pause();
+                _animator.Play(Animations.Stretching);
+                this.DragMove();
+                _animator.Play(Animations.Idle);
+                _behavior.Resume();
+            }
         };
     }
-
-    // SUPPRIME le champ "private BitmapSource? _bitmap;" — plus utilisé, l'animator le remplace
 
     private bool IsPixelOpaque(Point p)
     {
