@@ -24,7 +24,8 @@ public partial class MainWindow : Window
         var sheet = new BitmapImage(new Uri("assets/cat_animations/Idle.png", UriKind.Relative));
         int frameWidth = 64;
         int frameIndex = 0;
-        _bitmap = new CroppedBitmap(sheet, new Int32Rect(frameIndex * frameWidth, 0, frameWidth, 32));
+        var cropped = new CroppedBitmap(sheet, new Int32Rect(frameIndex * frameWidth, 0, frameWidth, 32));
+        _bitmap = new FormatConvertedBitmap(cropped, PixelFormats.Bgra32, null, 0);
         Idle.Source = _bitmap;
 
         // allows drag if pixel isn't transparent
