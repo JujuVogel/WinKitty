@@ -14,8 +14,9 @@
     <Canvas>
         <Image x:Name="Idle"
                Source="assets/cat_animations/Idle.png"
-               Width="64"
-               Height="32"
-               Stretch="Uniform"/>
+               Width="256"
+               Height="128"
+               Stretch="Uniform"
+               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
     </Canvas>
 </Window>
