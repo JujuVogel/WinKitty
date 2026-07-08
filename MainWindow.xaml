@@ -12,10 +12,10 @@
         Left="500"
         Top="300">
     <Canvas>
-        <Ellipse Width="100"
-                 Height="100"
-                 Fill="Orange"
-                 Stroke="Black"
-                 StrokeThickness="2"/>
+        <Image x:Name="Idle"
+               Source="assets/cat_animations/Idle.png"
+               Width="64"
+               Height="32"
+               Stretch="Uniform"/>
     </Canvas>
 </Window>
