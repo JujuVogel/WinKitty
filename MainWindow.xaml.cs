@@ -20,6 +20,13 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        this.SourceInitialized += (s, e) =>
+        {
+            var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            int style = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE);
+            NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE, style | NativeMethods.WS_EX_TOOLWINDOW);
+        };
+
         // loads sprite from spritesheet
         var sheet = new BitmapImage(new Uri("assets/cat_animations/Idle.png", UriKind.Relative));
         int frameWidth = 64;
