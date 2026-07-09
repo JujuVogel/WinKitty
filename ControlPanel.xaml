@@ -4,21 +4,21 @@
         Title="WinKitty - Panneau de contrôle"
         Width="300"
         Height="400">
-    <StackPanel Margin="10">
-        <TextBox x:Name="CatNameBox"
-                Text="Nom du chat"
-                Margin="0,0,0,10"/>
-        <Button Content="Nourrir"
-                Click="OnFeed"
-                Margin="0,0,0,5"/>
-        <Button Content="Dormir"
-                Click="OnSleep"
-                Margin="0,0,0,5"/>
-        <Button Content="Jouer"
-                Click="OnPlay"
-                Margin="0,0,0,5"/>
-        <Button Content="Changer d'apparence"
-                Click="OnChangeSkin"
-                Margin="0,0,0,5"/>
-    </StackPanel>
+        <StackPanel Margin="10">
+                <TextBox x:Name="CatNameBox"
+                         Text="Nom du chat"
+                         Margin="0,0,0,10"/>
+                <Button Content="Nourrir"
+                        Click="OnFeed"
+                        Margin="0,0,0,5"/>
+                <Button Content="Dormir"
+                        Click="OnSleep"
+                        Margin="0,0,0,5"/>
+                <Button Content="Jouer"
+                        Click="OnPlay"
+                        Margin="0,0,0,5"/>
+                <Button Content="Toilettes"
+                        Click="OnClean"
+                        Margin="0,0,0,5"/>
+        </StackPanel>
 </Window>
