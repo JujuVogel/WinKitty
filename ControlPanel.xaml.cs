@@ -11,13 +11,25 @@ public partial class ControlPanel : Window
         InitializeComponent();
         _cat = new MainWindow();
         _cat.Show();
+        // save name
+        CatNameBox.Text = _cat.SaveData.Name;
+        CatNameBox.LostFocus += (s, e) =>
+        {
+            _cat.SaveData.Name = CatNameBox.Text;
+            _cat.SaveData.Save();
+        };
     }
 
-    private void OnFeed(object s, RoutedEventArgs e) { /* ex: _cat.SetState("eating"); */ }
-    private void OnSleep(object s, RoutedEventArgs e) { /* ... */ }
-    private void OnPlay(object s, RoutedEventArgs e) { /* ... */ }
-    private void OnChangeSkin(object s, RoutedEventArgs e) { /* ... */ }
+    private void OnFeed(object s, RoutedEventArgs e) =>
+        _cat.PlayTimedAction(Animations.Eating, TimeSpan.FromSeconds(3), () => _cat.Stats.Feed());
 
+    private void OnSleep(object s, RoutedEventArgs e) =>
+        _cat.PlayTimedAction(Animations.Sleeping, TimeSpan.FromSeconds(6), () => _cat.Stats.Sleep());
+
+    private void OnPlay(object s, RoutedEventArgs e) =>
+        _cat.PlayTimedAction(Animations.Play, TimeSpan.FromSeconds(4), () => _cat.Stats.Play());
+    private void OnClean(object s, RoutedEventArgs e) =>
+_cat.PlayTimedAction(Animations.Cleaning, TimeSpan.FromSeconds(3), () => _cat.Stats.Clean());
     protected override void OnClosed(EventArgs e)
     {
         _cat.Close();

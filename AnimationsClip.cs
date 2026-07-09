@@ -14,4 +14,5 @@ public static class Animations
     public static readonly AnimationClip Cleaning = new("assets/cat_animations/Cleaning.png", 32, 32, 4, 1000 / 110, true);
     public static readonly AnimationClip Play = new("assets/cat_animations/Play.png", 32, 32, 6, 1000 / 100, true);
     public static readonly AnimationClip Attack = new("assets/cat_animations/Attack.png", 32, 32, 7, 1000 / 85, false);
+    public static readonly AnimationClip Grabbed = new("assets/cat_animations/Stretching.png", 32, 32, 8, 1000 / 150, true);
 }

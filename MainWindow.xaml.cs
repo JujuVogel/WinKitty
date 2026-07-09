@@ -9,6 +9,8 @@ public partial class MainWindow : Window
 {
     private SpriteAnimator _animator;
     private CatBehavior _behavior;
+    public CatSaveData SaveData { get; } = CatSaveData.Load();
+    public CatStats Stats { get; } = new();
 
     public MainWindow()
     {
@@ -21,12 +23,18 @@ public partial class MainWindow : Window
             int style = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE);
             NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE, style | NativeMethods.WS_EX_TOOLWINDOW);
         };
-
+        // launch animations
         _animator = new SpriteAnimator(Idle);
         _animator.Play(Animations.Idle);
 
+        // launch behavior
         _behavior = new CatBehavior(this, _animator);
         _behavior.Start();
+
+        // decay of stats
+        var decayTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+        decayTimer.Tick += (s, e) => Stats.Decay();
+        decayTimer.Start();
 
         // grabbing logic
         this.MouseLeftButtonDown += (s, e) =>
@@ -35,12 +43,28 @@ public partial class MainWindow : Window
             if (IsPixelOpaque(pos))
             {
                 _behavior.Pause();
-                _animator.Play(Animations.Stretching);
+                _animator.Play(Animations.Grabbed);
                 this.DragMove();
                 _animator.Play(Animations.Idle);
                 _behavior.Resume();
             }
         };
+    }
+
+    public void PlayTimedAction(AnimationClip clip, TimeSpan duration, Action onComplete)
+    {
+        _behavior.Pause();
+        _animator.Play(clip);
+
+        var timer = new System.Windows.Threading.DispatcherTimer { Interval = duration };
+        timer.Tick += (s, e) =>
+        {
+            timer.Stop();
+            onComplete();
+            _animator.Play(Animations.Idle);
+            _behavior.Resume();
+        };
+        timer.Start();
     }
 
     private bool IsPixelOpaque(Point p)
