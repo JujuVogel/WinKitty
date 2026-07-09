@@ -11,14 +11,55 @@
                 <Button Content="Nourrir"
                         Click="OnFeed"
                         Margin="0,0,0,5"/>
-                <Button Content="Dormir"
-                        Click="OnSleep"
-                        Margin="0,0,0,5"/>
+                <StackPanel Orientation="Horizontal"
+                                Margin="0,0,0,5">
+                        <Button Content="Dormir"
+                                        Click="OnSleep"
+                                        Width="100"/>
+                        <TextBox x:Name="SleepMinutesBox"
+                                        Text="1"
+                                        Width="40"
+                                        Margin="5,0,0,0"/>
+                        <TextBlock Text="min"
+                                        VerticalAlignment="Center"
+                                        Margin="5,0,0,0"/>
+                </StackPanel>
                 <Button Content="Jouer"
                         Click="OnPlay"
                         Margin="0,0,0,5"/>
                 <Button Content="Toilettes"
                         Click="OnClean"
                         Margin="0,0,0,5"/>
+                <TextBlock Text="Faim"
+                           Margin="0,0,0,2"/>
+                <ProgressBar x:Name="HungerBar"
+                             Minimum="0"
+                             Maximum="100"
+                             Height="16"
+                             Margin="0,0,0,8"/>
+
+                <TextBlock Text="Énergie"
+                           Margin="0,0,0,2"/>
+                <ProgressBar x:Name="EnergyBar"
+                             Minimum="0"
+                             Maximum="100"
+                             Height="16"
+                             Margin="0,0,0,8"/>
+
+                <TextBlock Text="Propreté"
+                           Margin="0,0,0,2"/>
+                <ProgressBar x:Name="CleanlinessBar"
+                             Minimum="0"
+                             Maximum="100"
+                             Height="16"
+                             Margin="0,0,0,8"/>
+
+                <TextBlock Text="Bonheur"
+                           Margin="0,0,0,2"/>
+                <ProgressBar x:Name="HappinessBar"
+                             Minimum="0"
+                             Maximum="100"
+                             Height="16"
+                             Margin="0,0,0,10"/>
         </StackPanel>
 </Window>
