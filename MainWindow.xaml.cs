@@ -12,8 +12,6 @@ public partial class MainWindow : Window
     public CatSaveData SaveData { get; } = CatSaveData.Load();
     public CatStats Stats { get; } = new();
     private AnimationClip? _currentActionClip;
-    private void OnToggleDesktop(object s, RoutedEventArgs e) => _cat.ToggleDesktopOnly();
-
     public MainWindow()
     {
         InitializeComponent();
