@@ -12,6 +12,7 @@ public partial class MainWindow : Window
     public CatSaveData SaveData { get; } = CatSaveData.Load();
     public CatStats Stats { get; } = new();
     private AnimationClip? _currentActionClip;
+    private void OnToggleDesktop(object s, RoutedEventArgs e) => _cat.ToggleDesktopOnly();
 
     public MainWindow()
     {
@@ -60,6 +61,40 @@ public partial class MainWindow : Window
         }
     }
 };
+    }
+    private bool _onDesktopOnly = false;
+
+    public void ToggleDesktopOnly()
+    {
+        var helper = new System.Windows.Interop.WindowInteropHelper(this);
+
+        if (!_onDesktopOnly)
+        {
+            IntPtr progman = NativeMethods.FindWindow("Progman", null);
+            NativeMethods.SendMessageTimeout(progman, 0x052C, IntPtr.Zero, IntPtr.Zero, 0, 1000, out _);
+
+            IntPtr workerW = IntPtr.Zero;
+            NativeMethods.EnumWindows((hWnd, lParam) =>
+            {
+                IntPtr shellView = NativeMethods.FindWindowEx(hWnd, IntPtr.Zero, "SHELLDLL_DefView", null);
+                if (shellView != IntPtr.Zero)
+                    workerW = NativeMethods.FindWindowEx(IntPtr.Zero, hWnd, "WorkerW", null);
+                return true;
+            }, IntPtr.Zero);
+
+            if (workerW != IntPtr.Zero)
+            {
+                this.Topmost = false;
+                NativeMethods.SetParent(helper.Handle, workerW);
+                _onDesktopOnly = true;
+            }
+        }
+        else
+        {
+            NativeMethods.SetParent(helper.Handle, IntPtr.Zero);
+            this.Topmost = true;
+            _onDesktopOnly = false;
+        }
     }
     public void PlaySleep(TimeSpan duration)
     {
