@@ -15,7 +15,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="assets\icon.ico">
-      <CopyToOutputassets\icon.ico>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputassets>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
