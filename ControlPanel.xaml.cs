@@ -42,12 +42,13 @@ public partial class ControlPanel : Window
             MessageBox.Show("Entre un nombre de minutes valide.");
             return;
         }
-        _cat.PlayTimedAction(Animations.Sleeping, TimeSpan.FromMinutes(minutes), () => _cat.Stats.Sleep());
+        _cat.PlaySleep(TimeSpan.FromMinutes(minutes));
     }
     private void OnPlay(object s, RoutedEventArgs e) =>
         _cat.PlayTimedAction(Animations.Play, TimeSpan.FromSeconds(4), () => _cat.Stats.Play());
     private void OnClean(object s, RoutedEventArgs e) =>
 _cat.PlayTimedAction(Animations.Cleaning, TimeSpan.FromSeconds(3), () => _cat.Stats.Clean());
+
     protected override void OnClosed(EventArgs e)
     {
         _cat.Close();

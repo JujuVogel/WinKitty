@@ -11,6 +11,7 @@ public partial class MainWindow : Window
     private CatBehavior _behavior;
     public CatSaveData SaveData { get; } = CatSaveData.Load();
     public CatStats Stats { get; } = new();
+    private AnimationClip? _currentActionClip;
 
     public MainWindow()
     {
@@ -38,22 +39,54 @@ public partial class MainWindow : Window
 
         // grabbing logic
         this.MouseLeftButtonDown += (s, e) =>
-        {
-            var pos = e.GetPosition(Idle);
-            if (IsPixelOpaque(pos))
-            {
-                _behavior.Pause();
-                _animator.Play(Animations.Grabbed);
-                this.DragMove();
-                _animator.Play(Animations.Idle);
-                _behavior.Resume();
-            }
-        };
-    }
+{
+    var pos = e.GetPosition(Idle);
+    if (IsPixelOpaque(pos))
+    {
+        bool wasIdleBehavior = _currentActionClip == null;
+        if (wasIdleBehavior) _behavior.Pause();
 
+        _animator.Play(Animations.Grabbed);
+        this.DragMove();
+
+        if (wasIdleBehavior)
+        {
+            _animator.Play(Animations.Idle);
+            _behavior.Resume();
+        }
+        else
+        {
+            _animator.Play(_currentActionClip!);
+        }
+    }
+};
+    }
+    public void PlaySleep(TimeSpan duration)
+    {
+        _behavior.Pause();
+        _currentActionClip = Animations.Sleeping;
+        _animator.Play(Animations.Sleeping);
+
+        var gainPerSecond = 100.0 / duration.TotalSeconds; // remplit exactement à 100 en fin de durée
+        var tick = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        tick.Tick += (s, e) => Stats.GainEnergy(gainPerSecond);
+        tick.Start();
+
+        var timer = new System.Windows.Threading.DispatcherTimer { Interval = duration };
+        timer.Tick += (s, e) =>
+        {
+            timer.Stop();
+            tick.Stop();
+            _currentActionClip = null;
+            _animator.Play(Animations.Idle);
+            _behavior.Resume();
+        };
+        timer.Start();
+    }
     public void PlayTimedAction(AnimationClip clip, TimeSpan duration, Action onComplete)
     {
         _behavior.Pause();
+        _currentActionClip = clip;
         _animator.Play(clip);
 
         var timer = new System.Windows.Threading.DispatcherTimer { Interval = duration };
@@ -61,6 +94,7 @@ public partial class MainWindow : Window
         {
             timer.Stop();
             onComplete();
+            _currentActionClip = null;
             _animator.Play(Animations.Idle);
             _behavior.Resume();
         };

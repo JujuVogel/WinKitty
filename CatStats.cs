@@ -10,6 +10,7 @@ public class CatStats
     public double Happiness { get; private set; } = 100;   // 100 = heureux, 0 = triste
 
     public void Feed() => Hunger = Math.Min(100, Hunger + 30);
+    public void GainEnergy(double amount) => Energy = Math.Min(100, Energy + amount);
     public void Sleep() => Energy = Math.Min(100, Energy + 40);
     public void Clean() => Cleanliness = Math.Min(100, Cleanliness + 35);
     public void Play() => Happiness = Math.Min(100, Happiness + 25);
