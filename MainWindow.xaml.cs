@@ -76,15 +76,27 @@ public partial class MainWindow : Window
             {
                 IntPtr shellView = NativeMethods.FindWindowEx(hWnd, IntPtr.Zero, "SHELLDLL_DefView", null);
                 if (shellView != IntPtr.Zero)
+                {
                     workerW = NativeMethods.FindWindowEx(IntPtr.Zero, hWnd, "WorkerW", null);
+                }
                 return true;
             }, IntPtr.Zero);
+
+            // fallback si la structure classique n'est pas trouvée : cherche un WorkerW direct sous le bureau
+            if (workerW == IntPtr.Zero)
+            {
+                workerW = NativeMethods.FindWindowEx(IntPtr.Zero, IntPtr.Zero, "WorkerW", null);
+            }
 
             if (workerW != IntPtr.Zero)
             {
                 this.Topmost = false;
                 NativeMethods.SetParent(helper.Handle, workerW);
                 _onDesktopOnly = true;
+            }
+            else
+            {
+                MessageBox.Show("Impossible de trouver le WorkerW — hack non supporté sur cette version de Windows.");
             }
         }
         else
