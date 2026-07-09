@@ -68,6 +68,8 @@ public partial class MainWindow : Window
 
         if (!_onDesktopOnly)
         {
+            MessageBox.Show("bouton cliqué"); // debug temporaire
+            var helper = new System.Windows.Interop.WindowInteropHelper(this);
             IntPtr progman = NativeMethods.FindWindow("Progman", null);
             NativeMethods.SendMessageTimeout(progman, 0x052C, IntPtr.Zero, IntPtr.Zero, 0, 1000, out _);
 
