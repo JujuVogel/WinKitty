@@ -15,8 +15,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="assets\icon.ico">
-      <CopyToOutputassets>PreserveNewest</CopyToOutputDirectory>
-    </None>
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+</None>
   </ItemGroup>
 
 </Project>
