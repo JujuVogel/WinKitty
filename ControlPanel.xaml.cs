@@ -49,6 +49,8 @@ public partial class ControlPanel : Window
     private void OnClean(object s, RoutedEventArgs e) =>
 _cat.PlayTimedAction(Animations.Cleaning, TimeSpan.FromSeconds(3), () => _cat.Stats.Clean());
 
+    private void OnToggleDesktop(object s, RoutedEventArgs e) => _cat.ToggleDesktopOnly();
+
     protected override void OnClosed(EventArgs e)
     {
         _cat.Close();
