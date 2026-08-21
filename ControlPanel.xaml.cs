@@ -75,7 +75,6 @@ public partial class ControlPanel : Window
         {
             MessageBox.Show("Le chat est déjà occupé.");
         }
-        _cat.PlaySleep(TimeSpan.FromMinutes(minutes));
     }
     private void OnPauseSleep(object s, RoutedEventArgs e)
     {

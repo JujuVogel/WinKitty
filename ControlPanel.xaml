@@ -11,7 +11,7 @@
                 <Button Content="Basculer bureau uniquement"
                         Click="OnToggleDesktop"
                         Margin="0,0,0,5"/>
-                // actions
+                <!-- actions -->
                 <Button x:Name="FeedButton"
                         Content="Nourrir"
                         Click="OnFeed"
@@ -29,28 +29,28 @@
                         <TextBlock Text="min"
                                    VerticalAlignment="Center"
                                    Margin="5,0,0,0"/>
-                        <TextBlock x:Name="SleepTimerText"
-                                   Text="00:00 / 00:00"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,5"/>
+                </StackPanel>
+                <TextBlock x:Name="SleepTimerText"
+                           Text="00:00 / 00:00"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,5"/>
 
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,0,0,5">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,5">
 
-                                <Button x:Name="PauseSleepButton"
-                                        Content="Pause"
-                                        Click="OnPauseSleep"
-                                        Width="100"
-                                        IsEnabled="False"/>
+                        <Button x:Name="PauseSleepButton"
+                                Content="Pause"
+                                Click="OnPauseSleep"
+                                Width="100"
+                                IsEnabled="False"/>
 
-                                <Button x:Name="CancelSleepButton"
-                                        Content="Annuler"
-                                        Click="OnCancelSleep"
-                                        Width="100"
-                                        Margin="5,0,0,0"
-                                        IsEnabled="False"/>
-                        </StackPanel>
+                        <Button x:Name="CancelSleepButton"
+                                Content="Annuler"
+                                Click="OnCancelSleep"
+                                Width="100"
+                                Margin="5,0,0,0"
+                                IsEnabled="False"/>
                 </StackPanel>
                 <Button x:Name="PlayButton"
                         Content="Jouer"
@@ -60,7 +60,7 @@
                         Content="Toilettes"
                         Click="OnClean"
                         Margin="0,0,0,5"/>
-                // stats
+                <!-- stats -->
                 <TextBlock Text="Faim"
                            Margin="0,0,0,2"/>
                 <ProgressBar x:Name="HungerBar"
