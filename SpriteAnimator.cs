@@ -27,15 +27,27 @@ public class SpriteAnimator
         _sheet = new FormatConvertedBitmap(
             new BitmapImage(new Uri(clip.Path, UriKind.Relative)),
             PixelFormats.Bgra32, null, 0);
+            int requiredWidth = clip.FrameWidth * (clip.StartFrame + clip.FrameCount);
+
+        // checks if the format of the png is a valid one
+        if (_sheet.PixelWidth < requiredWidth ||
+            _sheet.PixelHeight < clip.FrameHeight)
+        {
+            throw new InvalidOperationException(
+                $"Invalid sprite sheet '{clip.Path}': " +
+                $"expected at least {requiredWidth}x{clip.FrameHeight}, " +
+                $"got {_sheet.PixelWidth}x{_sheet.PixelHeight}.");
+        }
 
         _timer.Stop();
-        _timer.Interval = TimeSpan.FromSeconds(1.0 / clip.Fps);
+        _timer.Interval = TimeSpan.FromSeconds(1.0 / clip.FrameDurationMs);
         _timer.Tick -= OnTick;
         _timer.Tick += OnTick;
         _timer.Start();
         DrawFrame();
     }
 
+    // clock for animation
     private void OnTick(object? s, EventArgs e)
     {
         _frameIndex++;
@@ -49,7 +61,12 @@ public class SpriteAnimator
 
     private void DrawFrame()
     {
-        var rect = new Int32Rect(_frameIndex * _clip!.FrameWidth, 0, _clip.FrameWidth, _clip.FrameHeight);
+        int sourceFrameIndex = _clip!.StartFrame + _frameIndex;
+        var rect = new Int32Rect(
+            sourceFrameIndex * _clip.FrameWidth,
+            0,
+            _clip.FrameWidth,
+            _clip.FrameHeight);
         var cropped = new CroppedBitmap(_sheet, rect);
         _target.Source = cropped;
         CurrentBitmap = cropped;

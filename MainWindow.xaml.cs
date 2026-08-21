@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -36,29 +37,8 @@ public partial class MainWindow : Window
         decayTimer.Tick += (s, e) => Stats.Decay();
         decayTimer.Start();
 
-        // grabbing logic
-        this.MouseLeftButtonDown += (s, e) =>
-{
-    var pos = e.GetPosition(Idle);
-    if (IsPixelOpaque(pos))
-    {
-        bool wasIdleBehavior = _currentActionClip == null;
-        if (wasIdleBehavior) _behavior.Pause();
-
-        _animator.Play(Animations.Grabbed);
-        this.DragMove();
-
-        if (wasIdleBehavior)
-        {
-            _animator.Play(Animations.Idle);
-            _behavior.Resume();
-        }
-        else
-        {
-            _animator.Play(_currentActionClip!);
-        }
-    }
-};
+        // grabbing
+        MouseLeftButtonDown += OnCatMouseLeftButtonDown;
     }
     private bool _onDesktopOnly = false;
 
@@ -129,6 +109,8 @@ public partial class MainWindow : Window
         };
         timer.Start();
     }
+
+    // handles timer for sleeping
     public void PlayTimedAction(AnimationClip clip, TimeSpan duration, Action onComplete)
     {
         _behavior.Pause();
@@ -147,6 +129,7 @@ public partial class MainWindow : Window
         timer.Start();
     }
 
+    // prevents user to grab the transparent part of the frame
     private bool IsPixelOpaque(Point p)
     {
         var bmp = _animator.CurrentBitmap;
@@ -159,4 +142,36 @@ public partial class MainWindow : Window
         bmp.CopyPixels(new Int32Rect(x, y, 1, 1), pixel, 4, 0);
         return pixel[3] > 10;
     }
+
+    // handles grabbing
+    private void OnCatMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+{
+    Point position = e.GetPosition(Idle);
+
+    if (!IsPixelOpaque(position))
+        return;
+
+    bool wasIdle = _currentActionClip is null;
+
+    if (wasIdle)
+        _behavior.Pause();
+
+    try
+    {
+        _animator.Play(Animations.Grabbed);
+        DragMove();
+    }
+    finally
+    {
+        if (wasIdle)
+        {
+            _animator.Play(Animations.Idle);
+            _behavior.Resume();
+        }
+        else if (_currentActionClip is not null)
+        {
+            _animator.Play(_currentActionClip);
+        }
+    }
+}
 }
