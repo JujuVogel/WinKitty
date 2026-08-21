@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Interop;
 
 namespace WinKitty;
 
@@ -43,50 +44,32 @@ public partial class MainWindow : Window
     private bool _onDesktopOnly = false;
 
     public void ToggleDesktopOnly()
+{
+    var helper = new WindowInteropHelper(this);
+
+    if (!_onDesktopOnly)
     {
-        var helper = new System.Windows.Interop.WindowInteropHelper(this);
+        IntPtr desktopOwner = DesktopManager.FindDesktopOwner();
 
-        if (!_onDesktopOnly)
+        if (desktopOwner == IntPtr.Zero)
         {
-            MessageBox.Show("bouton cliqué"); // debug temporaire
-            IntPtr progman = NativeMethods.FindWindow("Progman", null);
-            NativeMethods.SendMessageTimeout(progman, 0x052C, IntPtr.Zero, IntPtr.Zero, 0, 1000, out _);
-
-            IntPtr workerW = IntPtr.Zero;
-            NativeMethods.EnumWindows((hWnd, lParam) =>
-            {
-                IntPtr shellView = NativeMethods.FindWindowEx(hWnd, IntPtr.Zero, "SHELLDLL_DefView", null);
-                if (shellView != IntPtr.Zero)
-                {
-                    workerW = NativeMethods.FindWindowEx(IntPtr.Zero, hWnd, "WorkerW", null);
-                }
-                return true;
-            }, IntPtr.Zero);
-
-            // fallback si la structure classique n'est pas trouvée : cherche un WorkerW direct sous le bureau
-            if (workerW == IntPtr.Zero)
-            {
-                workerW = NativeMethods.FindWindowEx(IntPtr.Zero, IntPtr.Zero, "WorkerW", null);
-            }
-
-            if (workerW != IntPtr.Zero)
-            {
-                this.Topmost = false;
-                NativeMethods.SetParent(helper.Handle, workerW);
-                _onDesktopOnly = true;
-            }
-            else
-            {
-                MessageBox.Show("Impossible de trouver le WorkerW — hack non supporté sur cette version de Windows.");
-            }
+            MessageBox.Show("Unable to find the Windows desktop.");
+            return;
         }
-        else
-        {
-            NativeMethods.SetParent(helper.Handle, IntPtr.Zero);
-            this.Topmost = true;
-            _onDesktopOnly = false;
-        }
+
+        Topmost = false;
+        helper.Owner = desktopOwner;
+
+        _onDesktopOnly = true;
     }
+    else
+    {
+        helper.Owner = IntPtr.Zero;
+        Topmost = true;
+
+        _onDesktopOnly = false;
+    }
+}
     public void PlaySleep(TimeSpan duration)
     {
         _behavior.Pause();
