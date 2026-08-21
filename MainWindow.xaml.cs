@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Interop;
+using System.Diagnostics;
 
 namespace WinKitty;
 
@@ -12,12 +13,12 @@ public partial class MainWindow : Window
     private SpriteAnimator _animator;
     private CatBehavior _behavior;
     public CatSaveData SaveData { get; } = CatSaveData.Load();
-    public CatStats Stats { get; } = new();
-    private AnimationClip? _currentActionClip;
+    public AppSettings Settings { get; } = new();
+    public CatStats Stats { get; }    private AnimationClip? _currentActionClip;
     public MainWindow()
     {
         InitializeComponent();
-
+        Stats = new CatStats(Settings);
         // hide window
         this.SourceInitialized += (s, e) =>
         {
@@ -34,8 +35,21 @@ public partial class MainWindow : Window
         _behavior.Start();
 
         // decay of stats
-        var decayTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
-        decayTimer.Tick += (s, e) => Stats.Decay();
+        var decayClock = Stopwatch.StartNew();
+
+        var decayTimer = new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(5)
+        };
+
+        decayTimer.Tick += (s, e) =>
+        {
+            TimeSpan elapsed = decayClock.Elapsed;
+            decayClock.Restart();
+
+            Stats.Decay(elapsed);
+        };
+
         decayTimer.Start();
 
         // grabbing

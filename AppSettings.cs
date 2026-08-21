@@ -1,0 +1,7 @@
+namespace WinKitty;
+
+public sealed class AppSettings
+{
+    public double StatIncreaseMultiplier { get; set; } = 1.0;
+    public double StatDecreaseMultiplier { get; set; } = 1.0;
+}
