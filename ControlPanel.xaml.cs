@@ -11,6 +11,35 @@ public partial class ControlPanel : Window
         EnergyBar.Value = _cat.Stats.Energy;
         CleanlinessBar.Value = _cat.Stats.Cleanliness;
         HappinessBar.Value = _cat.Stats.Happiness;
+        RefreshSleepDisplay();
+    }
+    private void RefreshSleepDisplay()
+    {
+        bool sleeping = _cat.Sleep.IsActive;
+        bool busy = _cat.IsBusy;
+
+        FeedButton.IsEnabled = !busy;
+        SleepButton.IsEnabled = !busy;
+        PlayButton.IsEnabled = !busy;
+        CleanButton.IsEnabled = !busy;
+        SleepMinutesBox.IsEnabled = !busy;
+
+        PauseSleepButton.IsEnabled = sleeping;
+        CancelSleepButton.IsEnabled = sleeping;
+
+        PauseSleepButton.Content =
+            _cat.Sleep.State == SleepState.Paused
+                ? "Reprendre"
+                : "Pause";
+
+        SleepTimerText.Text = sleeping
+            ? $"{FormatTime(_cat.Sleep.Elapsed)} / {FormatTime(_cat.Sleep.Duration)}"
+            : "00:00 / 00:00";
+    }
+
+    private static string FormatTime(TimeSpan time)
+    {
+        return $"{(int)time.TotalMinutes:00}:{time.Seconds:00}";
     }
 
     public ControlPanel()
@@ -42,7 +71,26 @@ public partial class ControlPanel : Window
             MessageBox.Show("Entre un nombre de minutes valide.");
             return;
         }
+        if (!_cat.PlaySleep(TimeSpan.FromMinutes(minutes)))
+        {
+            MessageBox.Show("Le chat est déjà occupé.");
+        }
         _cat.PlaySleep(TimeSpan.FromMinutes(minutes));
+    }
+    private void OnPauseSleep(object s, RoutedEventArgs e)
+    {
+        if (_cat.Sleep.State == SleepState.Running)
+            _cat.PauseSleep();
+        else if (_cat.Sleep.State == SleepState.Paused)
+            _cat.ResumeSleep();
+
+        RefreshSleepDisplay();
+    }
+
+    private void OnCancelSleep(object s, RoutedEventArgs e)
+    {
+        _cat.CancelSleep();
+        RefreshSleepDisplay();
     }
     private void OnPlay(object s, RoutedEventArgs e) =>
         _cat.PlayTimedAction(Animations.Play, TimeSpan.FromSeconds(4), () => _cat.Stats.Play());

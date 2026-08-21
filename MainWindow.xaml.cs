@@ -14,11 +14,25 @@ public partial class MainWindow : Window
     private CatBehavior _behavior;
     public CatSaveData SaveData { get; } = CatSaveData.Load();
     public AppSettings Settings { get; } = new();
-    public CatStats Stats { get; }    private AnimationClip? _currentActionClip;
+    public CatStats Stats { get; }
+    private AnimationClip? _currentActionClip;
+    public SleepSession Sleep { get; } = new();
+
+    public bool IsBusy => _currentActionClip is not null;
+
+    private readonly System.Windows.Threading.DispatcherTimer _sleepTimer =
+        new()
+        {
+            Interval = TimeSpan.FromMilliseconds(250)
+        };
+
+    private TimeSpan _lastSleepElapsed;
     public MainWindow()
     {
+        // sleeping behavior
         InitializeComponent();
         Stats = new CatStats(Settings);
+        _sleepTimer.Tick += OnSleepTick;
         // hide window
         this.SourceInitialized += (s, e) =>
         {
@@ -47,7 +61,9 @@ public partial class MainWindow : Window
             TimeSpan elapsed = decayClock.Elapsed;
             decayClock.Restart();
 
-            Stats.Decay(elapsed);
+            Stats.Decay(
+                elapsed,
+                decayEnergy: !Sleep.IsActive);
         };
 
         decayTimer.Start();
@@ -58,72 +74,145 @@ public partial class MainWindow : Window
     private bool _onDesktopOnly = false;
 
     public void ToggleDesktopOnly()
-{
-    var helper = new WindowInteropHelper(this);
-
-    if (!_onDesktopOnly)
     {
-        IntPtr desktopOwner = DesktopManager.FindDesktopOwner();
+        var helper = new WindowInteropHelper(this);
 
-        if (desktopOwner == IntPtr.Zero)
+        if (!_onDesktopOnly)
         {
-            MessageBox.Show("Unable to find the Windows desktop.");
-            return;
+            IntPtr desktopOwner = DesktopManager.FindDesktopOwner();
+
+            if (desktopOwner == IntPtr.Zero)
+            {
+                MessageBox.Show("Unable to find the Windows desktop.");
+                return;
+            }
+
+            Topmost = false;
+            helper.Owner = desktopOwner;
+
+            _onDesktopOnly = true;
         }
+        else
+        {
+            helper.Owner = IntPtr.Zero;
+            Topmost = true;
 
-        Topmost = false;
-        helper.Owner = desktopOwner;
-
-        _onDesktopOnly = true;
+            _onDesktopOnly = false;
+        }
     }
-    else
+    public bool PlaySleep(TimeSpan duration)
     {
-        helper.Owner = IntPtr.Zero;
-        Topmost = true;
+        if (IsBusy)
+            return false;
 
-        _onDesktopOnly = false;
-    }
-}
-    public void PlaySleep(TimeSpan duration)
-    {
+        Sleep.Start(duration);
+
         _behavior.Pause();
         _currentActionClip = Animations.Sleeping;
         _animator.Play(Animations.Sleeping);
 
-        var gainPerSecond = 100.0 / duration.TotalSeconds; // remplit exactement à 100 en fin de durée
-        var tick = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        tick.Tick += (s, e) => Stats.GainEnergy(gainPerSecond);
-        tick.Start();
+        _lastSleepElapsed = TimeSpan.Zero;
+        _sleepTimer.Start();
 
-        var timer = new System.Windows.Threading.DispatcherTimer { Interval = duration };
-        timer.Tick += (s, e) =>
+        return true;
+    }
+    public void PauseSleep()
+    {
+        if (Sleep.State != SleepState.Running)
+            return;
+
+        Sleep.Pause();
+        ApplySleepProgress();
+    }
+
+    public void ResumeSleep()
+    {
+        if (Sleep.State != SleepState.Paused)
+            return;
+
+        Sleep.Resume();
+    }
+
+    public void CancelSleep()
+    {
+        if (!Sleep.IsActive)
+            return;
+
+        if (Sleep.State == SleepState.Running)
         {
-            timer.Stop();
-            tick.Stop();
-            _currentActionClip = null;
-            _animator.Play(Animations.Idle);
-            _behavior.Resume();
-        };
-        timer.Start();
+            Sleep.Pause();
+            ApplySleepProgress();
+        }
+
+        EndSleep();
+    }
+    private void OnSleepTick(object? sender, EventArgs e)
+    {
+        if (Sleep.State != SleepState.Running)
+            return;
+
+        ApplySleepProgress();
+
+        if (Sleep.IsComplete)
+            EndSleep();
+    }
+    private void ApplySleepProgress()
+    {
+        TimeSpan elapsed = Sleep.Elapsed;
+        TimeSpan delta = elapsed - _lastSleepElapsed;
+
+        if (delta <= TimeSpan.Zero)
+            return;
+
+        double energyGain =
+            Settings.SleepEnergyPerMinute * delta.TotalMinutes;
+
+        Stats.GainEnergy(energyGain);
+
+        _lastSleepElapsed = elapsed;
+    }
+    private void EndSleep()
+    {
+        _sleepTimer.Stop();
+        Sleep.Reset();
+
+        _currentActionClip = null;
+        _animator.Play(Animations.Idle);
+        _behavior.Resume();
     }
 
     // handles timer for sleeping
-    public void PlayTimedAction(AnimationClip clip, TimeSpan duration, Action onComplete)
+    public bool PlayTimedAction(
+    AnimationClip clip,
+    TimeSpan duration,
+    Action onComplete)
     {
+        if (IsBusy)
+            return false;
+
         _behavior.Pause();
         _currentActionClip = clip;
         _animator.Play(clip);
 
-        var timer = new System.Windows.Threading.DispatcherTimer { Interval = duration };
+        var timer = new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = duration
+        };
+
         timer.Tick += (s, e) =>
         {
             timer.Stop();
+
             onComplete();
+
             _currentActionClip = null;
             _animator.Play(Animations.Idle);
             _behavior.Resume();
         };
+
         timer.Start();
+
+        return true;
     }
 
     // prevents user to grab the transparent part of the frame
@@ -142,33 +231,33 @@ public partial class MainWindow : Window
 
     // handles grabbing
     private void OnCatMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-{
-    Point position = e.GetPosition(Idle);
-
-    if (!IsPixelOpaque(position))
-        return;
-
-    bool wasIdle = _currentActionClip is null;
-
-    if (wasIdle)
-        _behavior.Pause();
-
-    try
     {
-        _animator.Play(Animations.Grabbed);
-        DragMove();
-    }
-    finally
-    {
+        Point position = e.GetPosition(Idle);
+
+        if (!IsPixelOpaque(position))
+            return;
+
+        bool wasIdle = _currentActionClip is null;
+
         if (wasIdle)
+            _behavior.Pause();
+
+        try
         {
-            _animator.Play(Animations.Idle);
-            _behavior.Resume();
+            _animator.Play(Animations.Grabbed);
+            DragMove();
         }
-        else if (_currentActionClip is not null)
+        finally
         {
-            _animator.Play(_currentActionClip);
+            if (wasIdle)
+            {
+                _animator.Play(Animations.Idle);
+                _behavior.Resume();
+            }
+            else if (_currentActionClip is not null)
+            {
+                _animator.Play(_currentActionClip);
+            }
         }
     }
-}
 }
