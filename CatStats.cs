@@ -23,7 +23,7 @@ public class CatStats
     public void Clean() => 
     Cleanliness = Math.Min(100, Cleanliness + 35 * _settings.StatIncreaseMultiplier);
     public void Play() => 
-    Happiness = Math.Min(100, Happiness + 30 * _settings.StatIncreaseMultiplier);
+    Happiness = Math.Min(100, Happiness + 25 * _settings.StatIncreaseMultiplier);
     
     public void GainEnergy(double amount) =>
         Energy = Math.Min(100, Energy + amount);

@@ -14,7 +14,8 @@ public partial class MainWindow : Window
     private CatBehavior _behavior;
     public CatSaveData SaveData { get; } = CatSaveData.Load();
     public AppSettings Settings { get; } = new();
-    public CatStats Stats { get; }    private AnimationClip? _currentActionClip;
+    public CatStats Stats { get; } 
+    private AnimationClip? _currentActionClip;
     public MainWindow()
     {
         InitializeComponent();
