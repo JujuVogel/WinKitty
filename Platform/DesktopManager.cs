@@ -1,4 +1,4 @@
-namespace WinKitty;
+namespace WinKitty.Platform;
 
 internal static class DesktopManager
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace WinKitty;
+namespace WinKitty.Cat;
 
 public class CatStats
 {

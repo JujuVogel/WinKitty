@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace WinKitty;
+namespace WinKitty.Services;
 
 public enum SleepState
 {

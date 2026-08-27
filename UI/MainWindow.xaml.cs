@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Interop;
 using System.Diagnostics;
 
-namespace WinKitty;
+namespace WinKitty.UI;
 
 public partial class MainWindow : Window
 {

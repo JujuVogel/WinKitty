@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace WinKitty;
+namespace WinKitty.Platform;
 
 internal static class NativeMethods
 {

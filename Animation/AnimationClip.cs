@@ -1,4 +1,4 @@
-namespace WinKitty;
+namespace WinKitty.Animation;
 // this file handles all of the sprites and animations
 
 public record AnimationClip(

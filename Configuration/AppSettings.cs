@@ -1,4 +1,4 @@
-namespace WinKitty;
+namespace WinKitty.Configuration;
 
 public sealed class AppSettings
 {

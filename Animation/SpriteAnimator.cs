@@ -5,7 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace WinKitty;
+namespace WinKitty.Animation;
 
 public class SpriteAnimator
 {

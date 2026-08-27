@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace WinKitty;
+namespace WinKitty.UI;
 
 public partial class ControlPanel : Window
 {
