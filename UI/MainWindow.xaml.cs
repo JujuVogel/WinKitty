@@ -10,6 +10,7 @@ using WinKitty.Animation;
 using WinKitty.Cat;
 using WinKitty.Configuration;
 using WinKitty.Services;
+using WinKitty.Platform;
 
 namespace WinKitty.UI;
 

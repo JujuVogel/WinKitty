@@ -1,4 +1,6 @@
 using System.Windows;
+using WinKitty.Animation;
+using WinKitty.Services;
 
 namespace WinKitty.UI;
 
