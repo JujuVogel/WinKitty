@@ -2,3 +2,6 @@ bin/
 obj/
 *.user
 .vs/
+# Third-party Elthen artwork; kept locally only, not redistributed.
+/assets/cat_animations/
+/assets/icon.ico
