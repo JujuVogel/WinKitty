@@ -1,4 +1,5 @@
 using System;
+using WinKitty.Configuration;
 
 namespace WinKitty.Cat;
 

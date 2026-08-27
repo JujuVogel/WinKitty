@@ -6,6 +6,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Interop;
 using System.Diagnostics;
 
+using WinKitty.Animation;
+using WinKitty.Cat;
+using WinKitty.Configuration;
+using WinKitty.Services;
+
 namespace WinKitty.UI;
 
 public partial class MainWindow : Window
