@@ -19,7 +19,8 @@ internal static class DesktopManager
                 return shellView;
         }
 
-        // On some Windows 10 configurations it lives under a WorkerW.
+        // Explorer may host SHELLDLL_DefView under a WorkerW
+        // instead of directly under Progman.
         IntPtr desktopOwner = IntPtr.Zero;
 
         NativeMethods.EnumWindows((window, _) =>
@@ -38,5 +39,17 @@ internal static class DesktopManager
         }, IntPtr.Zero);
 
         return desktopOwner;
+    }
+    
+    public static void ConfigureAsToolWindow(IntPtr windowHandle)
+    {
+        int style = NativeMethods.GetWindowLong(
+            windowHandle,
+            NativeMethods.GWL_EXSTYLE);
+
+        NativeMethods.SetWindowLong(
+            windowHandle,
+            NativeMethods.GWL_EXSTYLE,
+            style | NativeMethods.WS_EX_TOOLWINDOW);
     }
 }

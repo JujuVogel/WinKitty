@@ -43,8 +43,7 @@ public partial class MainWindow : Window
         this.SourceInitialized += (s, e) =>
         {
             var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-            int style = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE);
-            NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE, style | NativeMethods.WS_EX_TOOLWINDOW);
+            DesktopManager.ConfigureAsToolWindow(hwnd);
         };
         // launch animations
         _animator = new SpriteAnimator(Idle);
