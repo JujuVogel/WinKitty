@@ -48,6 +48,9 @@ public partial class ControlPanel : Window
     {
         InitializeComponent();
         _cat = new MainWindow();
+        IncreaseMultiplierBox.Text = _cat.Settings.StatIncreaseMultiplier.ToString();
+        DecreaseMultiplierBox.Text = _cat.Settings.StatDecreaseMultiplier.ToString();
+        SleepEnergyBox.Text = _cat.Settings.SleepEnergyPerMinute.ToString();
         _cat.Show();
         var refreshTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         refreshTimer.Tick += (s, e) => RefreshStatsDisplay();
@@ -104,5 +107,21 @@ _cat.PlayTimedAction(Animations.Cleaning, TimeSpan.FromSeconds(3), () => _cat.St
     {
         _cat.Close();
         base.OnClosed(e);
+    }
+    private void OnApplyAdvancedSettings(object sender, RoutedEventArgs e)
+    {
+        if (!double.TryParse(IncreaseMultiplierBox.Text, out double increase))
+            return;
+
+        if (!double.TryParse(DecreaseMultiplierBox.Text, out double decrease))
+            return;
+
+        if (!double.TryParse(SleepEnergyBox.Text, out double sleepEnergy))
+            return;
+        _cat.Settings.StatIncreaseMultiplier = increase;
+        _cat.Settings.StatDecreaseMultiplier = decrease;
+        _cat.Settings.SleepEnergyPerMinute = sleepEnergy;
+
+        _cat.Settings.Save();
     }
 }

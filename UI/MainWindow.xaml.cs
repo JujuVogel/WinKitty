@@ -19,7 +19,7 @@ public partial class MainWindow : Window
     private SpriteAnimator _animator;
     private CatBehavior _behavior;
     public CatSaveData SaveData { get; } = CatSaveData.Load();
-    public AppSettings Settings { get; } = new();
+    public AppSettings Settings { get; } = AppSettings.Load();
     public CatStats Stats { get; }
     private AnimationClip? _currentActionClip;
     public SleepSession Sleep { get; } = new();

@@ -91,7 +91,7 @@ public class CatBehavior
     {
         if (_walking)
         {
-            double speed = 2.0; // px par tick, ajuste la vitesse ici
+            double speed = 2.0;; // px par tick
             double dx = _targetX - _window.Left;
             if (Math.Abs(dx) < speed)
             {
